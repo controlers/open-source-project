@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>郑州生育津贴 vs 产假工资决策计算器｜纯公益无广</title>
+  <style>
+    :root {
+      --bg-page: #F5F9F7;
+      --bg-card: #FFFFFF;
+      --primary: #10B981;
+      --primary-dark: #059669;
+      --primary-light: #ECFDF5;
+      --primary-border: #A7F3D0;
+      --text-main: #1E293B;
+      --text-sub: #475569;
+      --text-muted: #94A3B8;
+      --border: #E2E8F0;
+      --warn-bg: #FFFBEB;
+      --warn-border: #FDE68A;
+      --warn-text: #B45309;
+      --danger-bg: #FEF2F2;
+      --danger-border: #FECACA;
+      --danger-text: #B91C1C;
+      --info-bg: #F0F9FF;
+      --info-border: #BAE6FD;
+      --info-text: #0369A1;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 16px 14px 48px;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 16px 8px 20px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      border: 1px solid var(--primary-border);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    .header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .header p {
+      font-size: 13px;
+      color: var(--text-sub);
+    }
+
+    /* Card */
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title .step-tag {
+      background: var(--primary);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    /* Form Controls */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .label-hint {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-muted);
+      display: block;
+      margin-top: 2px;
+    }
+
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    input[type="number"], select {
+      width: 100%;
+      height: 44px;
+      padding: 0 14px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+      background: #F8FAFC;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    input[type="number"]:focus, select:focus {
+      background: #FFFFFF;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+    }
+
+    .unit {
+      position: absolute;
+      right: 14px;
+      font-size: 13px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .preset-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .pill {
+      font-size: 12px;
+      padding: 5px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #F8FAFC;
+      color: var(--text-sub);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .pill.active {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary-dark);
+      font-weight: 600;
+    }
+
+    /* Result Box */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .metric-box {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 12px;
+      text-align: center;
+    }
+
+    .metric-box.highlight {
+      background: var(--primary-light);
+      border-color: var(--primary-border);
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-bottom: 4px;
+    }
+
+    .metric-value {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .metric-box.highlight .metric-value {
+      color: var(--primary-dark);
+    }
+
+    .verdict-box {
+      border-radius: var(--radius-md);
+      padding: 16px;
+      border: 1.5px solid;
+    }
+
+    .verdict-box.branch-a {
+      background: var(--primary-light);
+      border-color: var(--primary-border);
+      color: #065F46;
+    }
+
+    .verdict-box.branch-b {
+      background: var(--warn-bg);
+      border-color: var(--warn-border);
+      color: var(--warn-text);
+    }
+
+    .verdict-box.branch-c {
+      background: var(--info-bg);
+      border-color: var(--info-border);
+      color: var(--info-text);
+    }
+
+    .verdict-box.branch-d {
+      background: var(--danger-bg);
+      border-color: var(--danger-border);
+      color: var(--danger-text);
+    }
+
+    .verdict-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .verdict-desc {
+      font-size: 13.5px;
+      line-height: 1.6;
+    }
+
+    .verdict-tip {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(0,0,0,0.12);
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+
+    /* Runbook Checklist */
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+
+    .checklist-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .checklist-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 3px;
+      accent-color: var(--primary);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .check-content {
+      flex: 1;
+    }
+
+    .check-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+      transition: color 0.2s;
+    }
+
+    .checklist-item.done .check-title {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .check-desc {
+      font-size: 12.5px;
+      color: var(--text-sub);
+      margin-top: 3px;
+    }
+
+    .tag-red {
+      display: inline-block;
+      background: #FEE2E2;
+      color: #B91C1C;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-left: 4px;
+    }
+
+    /* Troubleshooting Accordion */
+    details {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      margin-bottom: 10px;
+      background: #FAFAFA;
+    }
+
+    details:last-child {
+      margin-bottom: 0;
+    }
+
+    summary {
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-main);
+    }
+
+    details p {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 12px 8px 0;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="badge">📍 郑州本地 · 纯公益无广决策工具</div>
+      <h1>郑州生育津贴 vs 产假工资测算器</h1>
+      <p>套用「就高原则」算清实际到手差额 · 附保姆级申领清单</p>
+    </div>
+
+    <!-- Step 1: Inputs -->
+    <div class="card">
+      <div class="card-title"><span class="step-tag">STEP 1</span> 输入你的参保与薪资变量</div>
+
+      <div class="form-group">
+        <label>
+          当前参保状态（影响申领资格）
+        </label>
+        <select id="status" onchange="calculate()">
+          <option value="normal">在职连续参保（满足郑州连续缴费月数要求）</option>
+          <option value="short">在职参保（分娩时暂未满连续缴费月数）</option>
+          <option value="resign">孕期打算辞职 / 转为个人灵活就业参保</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>
+          你产前的实际月平均工资
+          <span class="label-hint">包含基本工资、绩效等正常出勤月均收入（税前口径对比更直观）</span>
+        </label>
+        <div class="input-wrap">
+          <input type="number" id="personalSalary" value="8000" min="0" step="100" oninput="calculate()" />
+          <span class="unit">元 / 月</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>
+          所在单位上年度职工月平均工资（缴费基数）
+          <span class="label-hint">可在「河南医保」小程序查询个人缴费基数作为参考</span>
+        </label>
+        <div class="input-wrap">
+          <input type="number" id="companyBase" value="6500" min="0" step="100" oninput="calculate()" />
+          <span class="unit">元 / 月</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>
+          预计核定产假天数
+          <span class="label-hint">最终天数以医院诊断证明及郑州医保系统核定为准</span>
+        </label>
+        <div class="input-wrap">
+          <input type="number" id="leaveDays" value="190" min="1" max="365" oninput="syncPills(); calculate()" />
+          <span class="unit">天</span>
+        </div>
+        <div class="preset-pills" id="dayPills">
+          <button type="button" class="pill" onclick="setDays(98, this)">国家基础 98 天</button>
+          <button type="button" class="pill active" onclick="setDays(190, this)">郑州常见 190 天</button>
+          <button type="button" class="pill" onclick="setDays(205, this)">含难产/剖宫产 205 天</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Decision Output -->
+    <div class="card">
+      <div class="card-title"><span class="step-tag">STEP 2</span> 决策测算结果（就高原则）</div>
+
+      <div class="metrics-grid">
+        <div class="metric-box highlight">
+          <div class="metric-label">预估生育津贴总额</div>
+          <div class="metric-value" id="allowanceTotal">¥0</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-label">对应产假原工资总额</div>
+          <div class="metric-value" id="salaryTotal">¥0</div>
+        </div>
+      </div>
+
+      <div id="verdictBox" class="verdict-box branch-b">
+        <!-- Dynamic Content -->
+      </div>
+    </div>
+
+    <!-- Step 3: Runbook Checklist -->
+    <div class="card">
+      <div class="card-title"><span class="step-tag">STEP 3</span> 郑州申领执行清单（点击可勾选进度）</div>
+
+      <label class="checklist-item">
+        <input type="checkbox" id="chk1" onchange="saveCheck(this)" />
+        <div class="check-content">
+          <div class="check-title">1. 激活社保卡「银行金融功能」<span class="tag-red">最高频卡点</span></div>
+          <div class="check-desc">能刷卡买药≠能收钱！务必提前携带身份证和社保卡去发卡银行网点激活金融账户，并确认银行卡为非受限的一类卡。</div>
+        </div>
+      </label>
+
+      <label class="checklist-item">
+        <input type="checkbox" id="chk2" onchange="saveCheck(this)" />
+        <div class="check-content">
+          <div class="check-title">2. 核对医院「出院记录 / 诊断证明」</div>
+          <div class="check-desc">出院时务必确认证明上清晰写明分娩方式（顺产、难产/剖宫产、多胞胎情况），后台核定产假天数全看这一页纸。</div>
+        </div>
+      </label>
+
+      <label class="checklist-item">
+        <input type="checkbox" id="chk3" onchange="saveCheck(this)" />
+        <div class="check-content">
+          <div class="check-title">3. 归集基础材料</div>
+          <div class="check-desc">准备好本人有效身份证件、社保卡、出生医学证明、结婚证及出院记录/诊断证明的清晰照片或原件。</div>
+        </div>
+      </label>
+
+      <label class="checklist-item">
+        <input type="checkbox" id="chk4" onchange="saveCheck(this)" />
+        <div class="check-content">
+          <div class="check-title">4. 线上小程序或单位经办提交</div>
+          <div class="check-desc">微信/支付宝搜「河南医保」小程序或「豫事办」定位郑州，进入生育保险模块按提示上传；或交由公司 HR 统一申报。</div>
+        </div>
+      </label>
+    </div>
+
+    <!-- Step 4: Troubleshooting -->
+    <div class="card">
+      <div class="card-title"><span class="step-tag">排障</span> 常见卡点与异常排查（Troubleshooting）</div>
+
+      <details>
+        <summary>Q1：审核显示通过了，但钱迟迟没到账怎么办？</summary>
+        <p>90% 的原因是社保卡银行金融功能未激活，或绑定的银行卡属于二类卡触发了单日/年度入账限额。建议先联系发卡银行确认金融账户状态及收款限额。</p>
+      </details>
+
+      <details>
+        <summary>Q2：公司只把低额津贴转给我，拒绝补差额怎么办？</summary>
+        <p>保留好产前 12 个月的工资条/银行流水、劳动合同及医保局津贴拨付记录，先与公司 HR 沟通明确「生育津贴与产假工资就高享受、不足由用人单位补足」的规则；协商无果可向当地劳动保障监察部门反映。</p>
+      </details>
+
+      <details>
+        <summary>Q3：男职工配偶未就业，能领生育津贴吗？</summary>
+        <p>男职工参保符合条件时，其未就业配偶可按规定享受生育医疗费用定额报销（如产前检查定额标准的 50% 等），但通常不享受生育津贴（生育津贴针对参保女职工产假期间的工资替代）。具体以郑州医保局最新细则为准。</p>
+      </details>
+    </div>
+
+    <div class="footer">
+      整理初衷：受够了碎片化信息与软广，用代码把官方规则理顺成可计算的工具。<br />
+      *免责声明：本页面测算公式及流程仅供决策参考，不构成法律或官方承诺，具体资格认定、产假天数及实际发放金额以郑州市医疗保障局官方系统核定为准。
+    </div>
+  </div>
+
+  <script>
+    function formatMoney(num) {
+      return '¥' + Math.round(num).toLocaleString('zh-CN');
+    }
+
+    function setDays(days, btn) {
+      document.getElementById('leaveDays').value = days;
+      document.querySelectorAll('#dayPills .pill').forEach(p => p.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      calculate();
+    }
+
+    function syncPills() {
+      const val = Number(document.getElementById('leaveDays').value);
+      document.querySelectorAll('#dayPills .pill').forEach(p => {
+        p.classList.toggle('active', p.textContent.includes(String(val)));
+      });
+    }
+
+    function calculate() {
+      const status = document.getElementById('status').value;
+      const personalSalary = Math.max(0, Number(document.getElementById('personalSalary').value) || 0);
+      const companyBase = Math.max(0, Number(document.getElementById('companyBase').value) || 0);
+      const leaveDays = Math.max(1, Number(document.getElementById('leaveDays').value) || 1);
+
+      const allowanceTotal = (companyBase / 30) * leaveDays;
+      const salaryTotal = (personalSalary / 30) * leaveDays;
+      const diff = Math.abs(allowanceTotal - salaryTotal);
+
+      document.getElementById('allowanceTotal').textContent = formatMoney(allowanceTotal);
+      document.getElementById('salaryTotal').textContent = formatMoney(salaryTotal);
+
+      const box = document.getElementById('verdictBox');
+
+      if (status === 'resign') {
+        box.className = 'verdict-box branch-d';
+        box.innerHTML = `
+          <div class="verdict-title">⚠️ 高风险预警：孕期辞职可能导致无法领取生育津贴</div>
+          <div class="verdict-desc">
+            根据一般统筹规则，孕期主动离职转为个人灵活就业参保，通常可正常享受产检与住院分娩医疗费用报销，但<strong>往往不再享受职工生育津贴</strong>（相当于可能损失约 <strong>${formatMoney(Math.max(allowanceTotal, salaryTotal))}</strong> 的产假收入保障）。
+          </div>
+          <div class="verdict-tip">💡 决策建议：如无特殊情况，建议尽量保持在职连续参保至休完产假并完成津贴申领；具体衔接细则建议先拨打郑州医保服务热线核实。</div>
+        `;
+        return;
+      }
+
+      const shortNotice = status === 'short'
+        ? `<div class="verdict-tip">⏳ 连续缴费提示：分娩时如暂未满郑州规定的连续缴费月数，通常需在继续连续足额缴费满规定月数后再行补发，期间切勿断缴。</div>`
+        : '';
+
+      if (allowanceTotal - salaryTotal > 50) {
+        box.className = 'verdict-box branch-a';
+        box.innerHTML = `
+          <div class="verdict-title">✅ 结论：按「生育津贴」全额拿（预计多拿 ${formatMoney(diff)}）</div>
+          <div class="verdict-desc">
+            你的单位平均缴费基数高于个人实际工资。按照「就高原则」，医保基金拨付的 <strong>${formatMoney(allowanceTotal)}</strong> 生育津贴<strong>必须全额归你个人所有</strong>，高出你平时工资的 <strong>${formatMoney(diff)}</strong> 用人单位不得截留克扣。
+          </div>
+          ${shortNotice || '<div class="verdict-tip">🛡️ 避坑提醒：若产假期间公司已按原工资垫付，津贴到账后公司需将高出原工资的差额补发给你。</div>'}
+        `;
+      } else if (salaryTotal - allowanceTotal > 50) {
+        box.className = 'verdict-box branch-b';
+        box.innerHTML = `
+          <div class="verdict-title">⚖️ 结论：按「原工资标准」拿（单位需补差额 ${formatMoney(diff)}）</div>
+          <div class="verdict-desc">
+            你的实际工资高于单位平均缴费基数。按照「就高原则」，你产假期间应得总额为 <strong>${formatMoney(salaryTotal)}</strong>。医保局拨付 <strong>${formatMoney(allowanceTotal)}</strong> 生育津贴后，剩余 <strong>${formatMoney(diff)}</strong> 的差额<strong>必须由用人单位补足</strong>。
+          </div>
+          ${shortNotice || '<div class="verdict-tip">🛡️ 避坑提醒：警惕部分中小企业只转交低额津贴而拒绝补足工资差额，建议留存产前工资流水作为核对依据。</div>'}
+        `;
+      } else {
+        box.className = 'verdict-box branch-c';
+        box.innerHTML = `
+          <div class="verdict-title">ℹ️ 结论：两者基本持平（不重复领取）</div>
+          <div class="verdict-desc">
+            你的个人工资与单位缴费基数基本一致，产假期间预计总收入约为 <strong>${formatMoney(salaryTotal)}</strong>。生育津贴与产假工资不重复享受，若单位产假期间已正常按月发薪，津贴则作为单位发薪的成本补偿。
+          </div>
+          ${shortNotice}
+        `;
+      }
+    }
+
+    function saveCheck(el) {
+      el.closest('.checklist-item').classList.toggle('done', el.checked);
+      localStorage.setItem('zz_maternity_' + el.id, el.checked ? '1' : '0');
+    }
+
+    function loadChecks() {
+      ['chk1', 'chk2', 'chk3', 'chk4'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && localStorage.getItem('zz_maternity_' + id) === '1') {
+          el.checked = true;
+          el.closest('.checklist-item').classList.add('done');
+        }
+      });
+    }
+
+    loadChecks();
+    calculate();
+  </script>
+</body>
+</html>
